@@ -1,0 +1,52 @@
+name: commit-messages
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check every commit in the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh api --paginate "repos/$REPO/pulls/$PR/commits" --jq '.[] | @json' > commits.json
+          python3 - <<'PY'
+          import json, re, sys
+
+          SUMMARY = re.compile(r"^[a-z][a-z0-9_-]*(, [a-z][a-z0-9_-]*)*: [A-Z`].*\.$")
+          ISSUE = re.compile(r"^(Fixes|Part of) #\d+\.?$", re.MULTILINE)
+          LEFTOVER = re.compile(r"^(fixup!|squash!|amend!|wip\b)", re.IGNORECASE)
+
+          errors = []
+          with open("commits.json") as f:
+              commits = [json.loads(line) for line in f if line.strip()]
+          for c in commits:
+              sha = c["sha"][:9]
+              message = c["commit"]["message"].strip()
+              summary = message.split("\n", 1)[0]
+              if len(c["parents"]) > 1:
+                  errors.append(f"{sha}: merge commit; rebase the branch on main instead")
+                  continue
+              if LEFTOVER.match(summary):
+                  errors.append(f"{sha}: squash this commit into the one it corrects: {summary!r}")
+                  continue
+              if not SUMMARY.match(summary):
+                  errors.append(f"{sha}: summary should be 'area: Capitalised summary.', got {summary!r}")
+              if len(summary) > 72:
+                  errors.append(f"{sha}: summary is {len(summary)} characters, limit 72")
+              if not ISSUE.search(message):
+                  errors.append(f"{sha}: add 'Fixes #N.' or 'Part of #N.' on the last line")
+
+          print(f"checked {len(commits)} commit(s)")
+          for e in errors:
+              print(f"::error::{e}")
+          sys.exit(1 if errors else 0)
+          PY
