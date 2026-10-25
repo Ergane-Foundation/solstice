@@ -1,14 +1,9 @@
-## What this changes
+<!--
+Describe the change in a few sentences and link the issue it fixes, for
+example "Fixes #42". Say how you tested it, and add screenshots if it
+changes the dashboard or Grafana.
 
-## Why
-
-Closes #
-
-## How it was tested
-
-## Checklist
-
-- [ ] The pull request title follows Conventional Commits, for example `fix(operator): ...`
-- [ ] Tests are added or updated, and `make test` passes
-- [ ] If the suspend or resume path changed, tests show no job can lose its state
-- [ ] Documentation is updated if behaviour or configuration changed
+Before asking for review, make sure each commit is a single change that
+builds and passes tests on its own, following the commit guidelines in
+CONTRIBUTING.md.
+-->
