@@ -1,0 +1,4 @@
+target/*
+!target/solstice-operator.jar
+.git
+*.log

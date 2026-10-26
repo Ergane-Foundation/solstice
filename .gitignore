@@ -14,13 +14,14 @@ operator/target/
 # Python
 __pycache__/
 *.pyc
+.venv/
 
 # OS
 .DS_Store
 
 # Env
-.env
-.env.local
+.env*
+!.env.example
 
 # Local-only notes, not for the public repo
 docs/learn.md
@@ -33,3 +34,10 @@ docs/module-brief-*.md
 docs/production-readiness.md
 docs/demo-runbook.md
 traces/
+
+# Node
+node_modules/
+dist/
+
+# Logs
+*.log
