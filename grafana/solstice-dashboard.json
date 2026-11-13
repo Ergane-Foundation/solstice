@@ -504,6 +504,110 @@
       }
     },
     {
+      "id": 13,
+      "type": "timeseries",
+      "title": "Savepoint results over time",
+      "description": "Savepoint phase changes per interval, stacked by result.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 31
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "solstice-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (result) (increase(solstice_savepoint_total{controller=~\"$controller\"}[$__rate_interval]))",
+          "legendFormat": "{{result}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "stacking": {
+              "mode": "normal"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "type": "table",
+      "title": "Reconcile actions (selected range)",
+      "description": "How many times each action was taken in the selected time range.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 31
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "solstice-prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (action) (increase(solstice_reconcile_total{controller=~\"$controller\"}[$__range]))",
+          "instant": true,
+          "format": "table",
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "action": "Action",
+              "Value": "Count"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Count",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
       "id": 10,
       "type": "timeseries",
       "title": "Forecast ahead of the grid",
@@ -512,7 +616,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 39
       },
       "datasource": {
         "type": "prometheus",
@@ -612,7 +716,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 48
       },
       "datasource": {
         "type": "prometheus",
@@ -657,7 +761,7 @@
         "h": 5,
         "w": 12,
         "x": 12,
-        "y": 40
+        "y": 48
       },
       "datasource": {
         "type": "prometheus",
